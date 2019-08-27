@@ -50,6 +50,7 @@ public class S3Service {
 			log.info(fileName);
 			log.info(contentType);
 			log.info("Upload Finalizado!!!");
+			log.info(s3client.getUrl(bucketName, fileName).toURI().toString());
 
 			return s3client.getUrl(bucketName, fileName).toURI();
 		} catch (URISyntaxException e) {

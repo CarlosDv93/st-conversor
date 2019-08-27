@@ -39,7 +39,7 @@ public class Converter {
 		
 		InputStream is = multipartFile.getInputStream();
 		String contentType = multipartFile.getContentType();
-		String fileName = multipartFile.getName();
+		String fileName = multipartFile.getOriginalFilename();
 		
 		return s3Services.uploadFile(is, fileName, contentType);
 	}

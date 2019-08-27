@@ -6,6 +6,8 @@ import { HomeComponent } from './home/home.component';
 import { VideoComponent } from './video/video.component';
 import { RouterModule } from '@angular/router';
 import { ROUTES } from './app.routes';
+import { UploadService } from './services/upload.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -16,8 +18,11 @@ import { ROUTES } from './app.routes';
   imports: [
     BrowserModule,
     RouterModule.forRoot(ROUTES),
+    HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    UploadService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

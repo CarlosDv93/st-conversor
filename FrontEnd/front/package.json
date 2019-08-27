@@ -23,6 +23,7 @@
     "bitmovin-player-ui": "^3.6.1",
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
+    "package.json": "^2.0.1",
     "rxjs": "~6.3.3",
     "tether": "^1.4.7",
     "tslib": "^1.9.0",
