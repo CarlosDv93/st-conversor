@@ -524,7 +524,7 @@ public class BitmovinConfig {
 		System.out.println(manifest.getOutputs().get(0).getOutputPath());
 		System.out.println(manifest.getOrgId());
 		System.out.println(manifest.getId());
-
+		System.out.println(outputPath);
 		return manifest;
 	}
 

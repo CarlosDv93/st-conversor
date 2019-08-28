@@ -53,17 +53,22 @@ public class S3Service {
 			ObjectMetadata meta = new ObjectMetadata();
 			meta.setContentType(contentType);
 			log.info("Iniciando Upload........");
-			s3client.putObject(bucketName, fileName, is, meta);
+			s3client.putObject(bucketName+"/input", fileName, is, meta);
 			log.info(fileName);
 			log.info(contentType);
 			log.info("Filename: " + FilenameUtils.getBaseName(fileName));
 			log.info("Upload Finalizado!!!");
+			log.info("Bucket: " + bucketName);
 			log.info(s3client.getUrl(bucketName, fileName).toURI().toString());
-
-			DashManifest manifest = bitmovinConfig.converter(fileName, s3client.getUrl(bucketName, fileName)); 
+			
+			DashManifest manifest = bitmovinConfig.converter(fileName, s3client.getUrl(bucketName+"/input", fileName)); 
+			
+			log.info("manifest out: " + manifest.getOutputs().get(0).getOutputPath().toString().trim());
+			log.info(fileName.trim());
 
 			//return s3client.getUrl(bucketName, fileName).toURI();
-			URI url = new URI(bucketName + manifest.getOutputs().get(0).getOutputPath().toString().trim() + "/" + fileName.trim() + "_manifest.mpd");
+			URI url = new URI("https://st-bucket-carlosdv93.s3-sa-east-1.amazonaws.com" + manifest.getOutputs().get(0).getOutputPath().toString().trim() + "/" 
+								+ fileName.trim() + "_manifest.mpd");
 			
 			return url;
 		} catch (URISyntaxException e) {
