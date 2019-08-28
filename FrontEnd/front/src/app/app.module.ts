@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { ROUTES } from './app.routes';
 import { UploadService } from './services/upload.service';
 import { HttpClientModule } from '@angular/common/http';
+import { DashjsPlayerModule } from 'angular-dashjs-player';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     RouterModule.forRoot(ROUTES),
     HttpClientModule,
+    DashjsPlayerModule
   ],
   providers: [
     UploadService

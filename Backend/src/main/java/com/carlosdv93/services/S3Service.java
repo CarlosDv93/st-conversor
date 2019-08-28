@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.bitmovin.api.encoding.manifest.dash.DashManifest;
+import com.bitmovin.api.exceptions.BitmovinApiException;
+import com.bitmovin.api.http.RestException;
+import com.carlosdv93.config.BitmovinConfig;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 @Service
 @PropertySource("aws.config.properties")
@@ -27,7 +33,7 @@ public class S3Service {
 	@Value("${aws.config.s3.bucket}")
 	private String bucketName;
 
-	public URI uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException {
+	public URI uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException, BitmovinApiException, UnirestException, RestException, InterruptedException {
 		try {
 			String fileName = multipartFile.getOriginalFilename();
 			InputStream is;
@@ -41,7 +47,8 @@ public class S3Service {
 
 	}
 
-	public URI uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException {
+	public URI uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException {
+			BitmovinConfig bitmovinConfig = new BitmovinConfig();
 		try {
 			ObjectMetadata meta = new ObjectMetadata();
 			meta.setContentType(contentType);
@@ -49,12 +56,18 @@ public class S3Service {
 			s3client.putObject(bucketName, fileName, is, meta);
 			log.info(fileName);
 			log.info(contentType);
+			log.info("Filename: " + FilenameUtils.getBaseName(fileName));
 			log.info("Upload Finalizado!!!");
 			log.info(s3client.getUrl(bucketName, fileName).toURI().toString());
 
-			return s3client.getUrl(bucketName, fileName).toURI();
+			DashManifest manifest = bitmovinConfig.converter(fileName, s3client.getUrl(bucketName, fileName)); 
+
+			//return s3client.getUrl(bucketName, fileName).toURI();
+			URI url = new URI(bucketName + manifest.getOutputs().get(0).getOutputPath().toString().trim() + "/" + fileName.trim() + "_manifest.mpd");
+			
+			return url;
 		} catch (URISyntaxException e) {
-			throw new URISyntaxException("Erro ao converter URL para URI", contentType);
+			throw new URISyntaxException("Erro ao converter URL para URI", e.getMessage());
 		}
 
 	}

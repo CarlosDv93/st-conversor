@@ -1,6 +1,10 @@
-<p>
-  video works!
-</p>
 <div class="container">
-  <div class="my-player" id="my-player"></div>
+  <h2 class="center">
+    .....:::: Seu vídeo após ser convertido ::::.....
+  </h2>
+
+  <dashjs-player #dashPlayer [autoload]=player.autoload 
+    [src]=player.urlMpd>
+  </dashjs-player>
+
 </div>
