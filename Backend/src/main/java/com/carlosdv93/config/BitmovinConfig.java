@@ -1,11 +1,13 @@
 package com.carlosdv93.config;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 
 import com.bitmovin.api.BitmovinApi;
 import com.carlosdv93.controller.CreateCodecAudio;
@@ -15,7 +17,6 @@ import com.carlosdv93.controller.CreateEncoding;
 import com.carlosdv93.controller.CreateMuxingAudio;
 import com.carlosdv93.controller.CreateMuxingVideo;
 import com.carlosdv93.controller.CreateStreamsForCodecs;
-import com.carlosdv93.models.bodys.StreamsForCodecs;
 import com.carlosdv93.models.responses.AudioCodecResponse;
 import com.carlosdv93.models.responses.CodecConfig1500000Response;
 import com.carlosdv93.models.responses.DashManifestResponse;
@@ -49,34 +50,37 @@ public class BitmovinConfig {
 	public BitmovinConfig() {
 	}
 
-	public ResponseEntity<EncodingResponse> converter(URI path) {
+	public BodyBuilder converter(URI path) throws URISyntaxException {
 
 		//Criando o encoding
 		ResponseEntity<EncodingResponse> response = CreateEncoding.createEncodingPOST();
-		System.out.println(response.getBody().getData().getResult().getId());
+		System.out.println("encodingId: "+response.getBody().getData().getResult().getId());
 		String encodingId = response.getBody().getData().getResult().getId();
 		
 		//Criando o Codec 1500000
 		ResponseEntity<CodecConfig1500000Response> responseCodecConfig = CreateCodecConfig1500000.createCodecConfig1500000POST();
 		
-		System.out.println(responseCodecConfig.getBody().getData().getResult().getId());
+		System.out.println("codecConfigId: " + responseCodecConfig.getBody().getData().getResult().getId());
 		String codecConfigId = responseCodecConfig.getBody().getData().getResult().getId();
 		
 		//Criando a stream
 		ResponseEntity<StreamsForCodecsResponse> responseStreamsForCodecs = CreateStreamsForCodecs.createStreamsForCodecsPOST(encodingId, path, codecConfigId);
-		System.out.println(responseStreamsForCodecs.getBody().getData().getResult().getId());
+		System.out.println("streamId " + responseStreamsForCodecs.getBody().getData().getResult().getId());
 		String streamId = responseStreamsForCodecs.getBody().getData().getResult().getId();
 
 		//Criando o codec de Audio
 		ResponseEntity<AudioCodecResponse> responseAudioCodec = CreateCodecAudio.createAudioCodecPOST();
+		System.out.println("idAudioCodec: " + responseAudioCodec.getBody().getData().getResult().getId());
 		String idAudioCodec = responseAudioCodec.getBody().getData().getResult().getId();
 		
 		//Criando Muxing Video
 		ResponseEntity<MuxingVideoResponse> responseMxVideo = CreateMuxingVideo.createMxVideoPOST(streamId, encodingId);
+		System.out.println("mxVideoId: " + responseMxVideo.getBody().getData().getResult().getId());
 		String mxVideoId = responseMxVideo.getBody().getData().getResult().getId();
 		
 		//Criando Muxing Audio
 		ResponseEntity<MuxingAudioResponse> responseMxAudio = CreateMuxingAudio.createMxAudioPOST(streamId, encodingId);
+		System.out.println("mxAudioId: " + responseMxAudio.getBody().getData().getResult().getId());
 		String mxAudioId = responseMxAudio.getBody().getData().getResult().getId();
 		
 		//Criando o DashManifest
@@ -84,8 +88,9 @@ public class BitmovinConfig {
 		String manifestName = responseDash.getBody().getData().getResult().getManifestName();
 		String outputPathManifest = responseDash.getBody().getData().getResult().getOutputs().get(0).getOutputPath();
 		log.info("MANIFEST PATH: " + outputPathManifest +"/"+ manifestName);
+		URI uri = new URI(outputPathManifest +"/"+ manifestName);
 		
-		return response;
+		return ResponseEntity.created(uri);
 	}
 
 

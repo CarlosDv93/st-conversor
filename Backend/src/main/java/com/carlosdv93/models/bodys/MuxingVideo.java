@@ -54,6 +54,22 @@ public class MuxingVideo implements Serializable {
 		outputs.add(new OutputMuxingVideo());
 	}
 
+	public ArrayList<StreamMuxingVideo> getStreams() {
+		return streams;
+	}
+
+	public ArrayList<OutputMuxingVideo> getOutputs() {
+		return outputs;
+	}
+
+	public void setStreams(ArrayList<StreamMuxingVideo> streams) {
+		this.streams = streams;
+	}
+
+	public void setOutputs(ArrayList<OutputMuxingVideo> outputs) {
+		this.outputs = outputs;
+	}
+
 }
 
 class StreamMuxingVideo {

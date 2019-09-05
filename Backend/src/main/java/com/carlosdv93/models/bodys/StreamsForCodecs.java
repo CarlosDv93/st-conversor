@@ -38,9 +38,19 @@ public class StreamsForCodecs implements Serializable {
 		inputStreams.add(inputStreamsCodec);
 	}
 
+	public ArrayList<InputStreamsCodec> getInputStreams() {
+		return inputStreams;
+	}
+
+	public void setInputStreams(ArrayList<InputStreamsCodec> inputStreams) {
+		this.inputStreams = inputStreams;
+	}
+
 }
 
-class InputStreamsCodec {
+class InputStreamsCodec implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String inputId = "Input_Teste_1024_1";
 	private String inputPath;

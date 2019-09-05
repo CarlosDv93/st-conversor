@@ -12,7 +12,7 @@ public class DashManifest implements Serializable {
 
 	private String name = "Manifest";
 	private String manifestName = "manifest.mpd";
-	Outputs OutputsObject;
+	ArrayList<Outputs> outputs = new ArrayList<Outputs>();
 
 	// Getter Methods
 
@@ -22,10 +22,6 @@ public class DashManifest implements Serializable {
 
 	public String getManifestName() {
 		return manifestName;
-	}
-
-	public Outputs getOutputs() {
-		return OutputsObject;
 	}
 
 	// Setter Methods
@@ -38,14 +34,24 @@ public class DashManifest implements Serializable {
 		this.manifestName = manifestName;
 	}
 
-	public void setOutputs(Outputs outputsObject) {
-		this.OutputsObject = outputsObject;
+	public ArrayList<Outputs> getOutputs() {
+		return outputs;
 	}
+
+	public void setOutputs(ArrayList<Outputs> outputsObject) {
+		outputs = outputsObject;
+	}
+	
+	public void setOutputs() {
+		Outputs output = new Outputs();
+		outputs.add(output);
+	}
+
 }
 
 class Outputs {
 	private String outputId = "Manifest_TESTE_1024";
-	private String outputPath = "https://st-bucket-carlosdv93.s3-sa-east-1.amazonws.com/output/teste/mpd/";
+	private String outputPath = "https://st-conversor-carlos9.s3-sa-east-1.amazonws.com/output/teste/mpd/";
 	ArrayList<AclPermissionDash> acl = new ArrayList<AclPermissionDash>();
 
 	// Getter Methods
@@ -59,6 +65,14 @@ class Outputs {
 	}
 
 	// Setter Methods
+
+	public ArrayList<AclPermissionDash> getAcl() {
+		return acl;
+	}
+
+	public void setAcl(ArrayList<AclPermissionDash> acl) {
+		this.acl = acl;
+	}
 
 	public void setOutputId(String outputId) {
 		this.outputId = outputId;

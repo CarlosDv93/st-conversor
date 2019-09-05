@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public class S3Service {
 	@Value("${aws.config.s3.bucket}")
 	private String bucketName;
 
-	public ResponseEntity<EncodingResponse> uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException, BitmovinApiException, UnirestException, RestException, InterruptedException {
+	public BodyBuilder uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException, BitmovinApiException, UnirestException, RestException, InterruptedException {
 		try {
 			String fileName = multipartFile.getOriginalFilename();
 			InputStream is;
@@ -50,7 +51,7 @@ public class S3Service {
 
 	}
 
-	public ResponseEntity<EncodingResponse> uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException {
+	public BodyBuilder uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException {
 			BitmovinConfig bitmovinConfig = new BitmovinConfig();
 		try {
 			ObjectMetadata meta = new ObjectMetadata();
