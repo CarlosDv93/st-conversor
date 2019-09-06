@@ -26,6 +26,9 @@ public class S3Config {
 	@Value("${aws.config.s3.region}")
 	private String region;
 	
+	@Value("${aws.config.s3.bucket}")
+	private String bucketName;
+	
 	@Bean
 	public AmazonS3 s3client() {
 		BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
@@ -34,16 +37,15 @@ public class S3Config {
 
 		return s3Client;
 	}
-
-	/*
-	 * private String access_key_id; private String secret_access_key; private
-	 * String s3_region;
-	 * 
-	 * @Bean public AmazonS3 s3client() { BasicAWSCredentials awsCreds = new
-	 * BasicAWSCredentials(access_key_id, secret_access_key); AmazonS3 s3Client =
-	 * AmazonS3ClientBuilder.standard() .withRegion(Regions.fromName(s3_region))
-	 * .withCredentials(new AWSStaticCredentialsProvider(awsCreds)) .build();
-	 * 
-	 * return s3Client; }
-	 */
+	
+	@Bean
+	public S3Credential s3Credential() {
+		S3Credential s3cred = new S3Credential();
+		s3cred.setAccessKey(awsId);
+		s3cred.setSecretKey(awsKey);
+		s3cred.setBucketName(bucketName);
+		
+		return s3cred;
+		
+	}
 }

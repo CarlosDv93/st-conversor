@@ -36,16 +36,14 @@ public class Converter {
 		return HttpStatus.OK;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
-	public BodyBuilder uploadFile(@RequestParam(name="file") MultipartFile file) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException{
-		ResponseEntity<EncodingResponse> uri = uploadVideoFile(file);
-		
-		return ResponseEntity.created(uri.getHeaders().getLocation());
+	public ResponseEntity<String> uploadFile(@RequestParam(name="file") MultipartFile file) throws Exception {
+		ResponseEntity<String> uri = uploadVideoFile(file);
+		System.out.println(uri.getBody());
+		return uri;
 	}
 	
-	public ResponseEntity<EncodingResponse> uploadVideoFile(MultipartFile multipartFile) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException {
-		
+	public ResponseEntity<String> uploadVideoFile(MultipartFile multipartFile) throws Exception {
 		InputStream is = multipartFile.getInputStream();
 		String contentType = multipartFile.getContentType();
 		String fileName = multipartFile.getOriginalFilename();

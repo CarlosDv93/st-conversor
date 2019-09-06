@@ -22,6 +22,7 @@ import com.bitmovin.api.encoding.manifest.dash.DashManifest;
 import com.bitmovin.api.exceptions.BitmovinApiException;
 import com.bitmovin.api.http.RestException;
 import com.carlosdv93.config.BitmovinConfig;
+import com.carlosdv93.config.S3Credential;
 import com.carlosdv93.models.responses.EncodingResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -36,8 +37,19 @@ public class S3Service {
 
 	@Value("${aws.config.s3.bucket}")
 	private String bucketName;
+	
+	@Value("${aws.config.access_key_id}")
+	private String awsId;
 
-	public BodyBuilder uploadFile(MultipartFile multipartFile) throws IOException, URISyntaxException, BitmovinApiException, UnirestException, RestException, InterruptedException {
+	@Value("${aws.config.secret_access_key}")
+	private String awsKey;
+
+	@Value("${aws.config.s3.region}")
+	private String region;
+	
+	
+
+	public ResponseEntity<String> uploadFile(MultipartFile multipartFile) throws Exception {
 		try {
 			String fileName = multipartFile.getOriginalFilename();
 			InputStream is;
@@ -45,14 +57,15 @@ public class S3Service {
 			String contentType = multipartFile.getContentType();
 
 			return uploadFile(is, fileName, contentType);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new IOException("Erro de IO: " + e.getMessage());
 		}
 
 	}
 
-	public BodyBuilder uploadFile(InputStream is, String fileName, String contentType) throws URISyntaxException, IOException, BitmovinApiException, UnirestException, RestException, InterruptedException {
+	public ResponseEntity<String> uploadFile(InputStream is, String fileName, String contentType) throws Exception {
 			BitmovinConfig bitmovinConfig = new BitmovinConfig();
+			S3Credential s3Creds = s3Credential();
 		try {
 			ObjectMetadata meta = new ObjectMetadata();
 			meta.setContentType(contentType);
@@ -65,21 +78,21 @@ public class S3Service {
 			log.info("Bucket: " + bucketName);
 			log.info(s3client.getUrl(bucketName+"/input", fileName).toURI().toString());
 			
-			//DashManifest manifest = bitmovinConfig.converter(fileName, s3client.getUrl(bucketName+"/input", fileName)); 
-			return bitmovinConfig.converter(s3client.getUrl(bucketName+"/input", fileName).toURI());
+			return bitmovinConfig.converter(s3client.getUrl(bucketName+"/input", fileName).toURI(), s3Creds);
 			
-//			log.info("manifest out: " + manifest.getOutputs().get(0).getOutputPath().toString().trim());
-//			log.info(fileName.trim());
-
-			//return s3client.getUrl(bucketName, fileName).toURI();
-//			URI url = new URI("https://st-bucket-carlosdv93.s3-sa-east-1.amazonaws.com" + manifest.getOutputs().get(0).getOutputPath().toString().trim() + "/" 
-//								+ fileName.trim() + "_manifest.mpd");
-			
-//			return url;
-		} catch (URISyntaxException e) {
-			throw new URISyntaxException("Erro ao converter URL para URI", e.getMessage());
+		} catch (Exception e) {
+			throw new Exception("Erro ao converter URL para URI " + e.getMessage());
 		}
 
 	}
-
+	
+	public S3Credential s3Credential() {
+		S3Credential s3cred = new S3Credential();
+		s3cred.setAccessKey(awsId);
+		s3cred.setSecretKey(awsKey);
+		s3cred.setBucketName(bucketName);
+		
+		return s3cred;
+		
+	}
 }
