@@ -22,7 +22,7 @@ public class StartEncoding {
 			
 		HttpEntity<String> request;
 		
-		String urlBitmovin = "https://api.bitmovin.com/v1/encoding/encodings/"+encodingId+"/streams";
+		String urlBitmovin = "https://api.bitmovin.com/v1/encoding/encodings/"+encodingId+"/start";
 		EncodingStart start = new EncodingStart(manifestId);
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -41,8 +41,10 @@ public class StartEncoding {
 	        return response;
 	        
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return new ResponseEntity<ResponseStart>(HttpStatus.BAD_REQUEST);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return new ResponseEntity<ResponseStart>(HttpStatus.BAD_REQUEST);
 		}
 
